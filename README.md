@@ -1,2 +1,2 @@
 # Boot-img-puller
-Pull boot image from stock firmware without rooting using magisk and without custom recovery.
+Do you wants to know what is this? 🧐 then :| [follow me](https://gist.github.com/gitclone-url/a1f693b64d8f8701ec24477a2ccaab87)
