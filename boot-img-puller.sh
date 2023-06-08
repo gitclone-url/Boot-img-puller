@@ -62,6 +62,7 @@ if [[ -n "$check_slot" ]]; then
   echo "Your device has A/B slots"
   echo ""
   echo "boot_a partition location: $boot_a_path"
+  echo ""
   echo "boot_b partition location: $boot_b_path"
 else
   # Single-slot device
@@ -91,18 +92,6 @@ else
   echo "Your device has a single slot"
   echo ""
   echo "boot partition location: $boot_path"
-fi
-else
-  echo ""
-  echo "Partition location not found"
-  echo ""
-  echo "Reason: Neither boot_a nor boot_b nor boot symbolic file exists in /dev/block/platform by-name directory"
-  exit 1
-fi
-
-# Check if progress utility is installed and install if necessary
-if ! command -v progress >/dev/null 2>&1; then
-  pkg install -y progress >/dev/null 2>&1
 fi
 
 # Function to pull the boot image for a dual-slot device
@@ -143,9 +132,9 @@ pull_boot_image_dual_slot() {
     esac
   done
 
-  # Pull the boot image using dd with progress
+  # Pull the boot image using dd with pv for progress monitoring
   echo "Pulling the boot image from $boot_image_path..."
-  if progress -m "$boot_image_path" | dd of="./boot_$active_slot.img"; then
+  if dd if="$boot_image_path" of="./boot$active_slot.img"; then
     echo ""
     echo "Boot image pulled successfully and saved to the $(pwd) directory."
   else
@@ -162,9 +151,9 @@ pull_boot_image_single_slot() {
   # Set the boot partition to read-write
   blockdev --setrw "$boot_path"
 
-  # Pull the boot image using dd with progress
+  # Pull the boot image using dd with pv for progress monitoring
   echo "Pulling the boot image from $boot_path..."
-  if progress -m "$boot_path" | dd of="./boot.img"; then
+  if dd if="$boot_path" of="./boot.img"; then
     echo ""
     echo "Boot image pulled successfully and saved to the $(pwd) directory."
   else
